@@ -8,17 +8,6 @@ export default function Index() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isvisible , setIsvisible] = useState(false)
-
-  const signUp = () => {
-    createUserWithEmailAndPassword(auth , email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('User registered: ', user);
-      })
-      .catch((error) => {
-        console.error('Error: ', error);
-      });
-  };
   const changevisibility = ()=> {
     setIsvisible(! isvisible)
   }
@@ -41,19 +30,19 @@ export default function Index() {
         <Image source={logo}  style= {styles.insta_logo_style}/>
         <TextInput placeholder="Email" value={email} onChangeText={setEmail} style= {styles.style_input} />
         <View style={styles.style_password}>
-          <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={!isvisible} style={[styles.style_input_password]} />
+          <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={!isvisible} style={styles.style_input} />
           <TouchableOpacity style = {styles.style_icon} onPress={changevisibility}>
           <Icon name = {isvisible ? "visibility": "visibility-off"} color = "#6d6d6d" size = {15}/>
           </TouchableOpacity>
         </View>
        
        {/* <Button title="Sign Up" onPress={signUp} /> */}
-       <Pressable onPress={signUp} style= {styles.Pressable_style}>
-         <Text  style = {styles.text_style}>Sign UP</Text>
+       <Pressable onPress={signIn} style= {styles.Pressable_style}>
+         <Text  style = {styles.text_style}>Sign In</Text>
        </Pressable>
        <View style = {styles.sign_in_view}>
-        <Text style = {{color: "#6d6d6d"}}>Already have an account </Text>
-        <Text onPress={signIn} style = {{color:"#0095F6" , textDecorationLine :"underline"}}>Sign In</Text>
+        <Text style = {{color: "#6d6d6d"}}>Don't have an account</Text>
+        <Text onPress={signIn} style = {{color:"#0095F6" , textDecorationLine :"underline"}}>Sign Up</Text>
        </View>
        {/* <Button title="Sign In" onPress={signIn} /> */}
     </View>
@@ -114,9 +103,7 @@ const styles = StyleSheet.create({
   marginVertical: 10,
  },
  style_password :{
-  flexDirection: "row",
-  position: "relative",
-  width: "90%",
+  flexDirection: "row"
  },
  style_icon : {
   position : "absolute",
@@ -124,19 +111,7 @@ const styles = StyleSheet.create({
   right: 0 ,
   marginRight:10,
 
- },
-
- style_input_password : {
-  paddingHorizontal :20,
-  paddingVertical : 10,
-  backgroundColor : "#EEE",
-  textAlign: "left",
-  width : "100%",
-  marginVertical: 10,
-  borderColor: "#C5C5C5",
-  borderWidth: 1,
-  borderRadius :8,
- },
+ }
 
 
 
