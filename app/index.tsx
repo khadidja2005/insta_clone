@@ -3,8 +3,14 @@ import { View, Text, TextInput, Button , StyleSheet, SafeAreaView , Image, Press
 import {auth} from "./firebaseConfig"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 const logo = require("../assets/images/logos_instagram.png")
-export default function Index() {
+
+
+
+export default function index() {
+
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isvisible , setIsvisible] = useState(false)
@@ -53,7 +59,7 @@ export default function Index() {
        </Pressable>
        <View style = {styles.sign_in_view}>
         <Text style = {{color: "#6d6d6d"}}>Already have an account </Text>
-        <Text onPress={signIn} style = {{color:"#0095F6" , textDecorationLine :"underline"}}>Sign In</Text>
+        <Text onPress={() => navigation.navigate('Signin')} style={{ color: "#0095F6", textDecorationLine: "underline" }}>Sign In</Text>
        </View>
        {/* <Button title="Sign In" onPress={signIn} /> */}
     </View>
