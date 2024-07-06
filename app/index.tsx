@@ -14,31 +14,25 @@ export default function index() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isvisible , setIsvisible] = useState(false)
-
+  const [error, setError] = useState("");
   const signUp = () => {
     createUserWithEmailAndPassword(auth , email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log('User registered: ', user);
+        setError("");
       })
       .catch((error) => {
         console.error('Error: ', error);
+        if (error.message.includes("Password should be at least 6 characters"))
+        setError("Password should be at least 6 characters");
+        else if (error.message.includes("auth/invalid-email"))
+          setError("invalid email");
       });
   };
   const changevisibility = ()=> {
     setIsvisible(! isvisible)
   }
-
-  const signIn = () => {
-    signInWithEmailAndPassword(auth , email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('User signed in: ', user);
-      })
-      .catch((error) => {
-        console.error('Error: ', error);
-      });
-  };
 
   return (
     <SafeAreaView style = {styles.container}>
@@ -52,7 +46,7 @@ export default function index() {
           <Icon name = {isvisible ? "visibility": "visibility-off"} color = "#6d6d6d" size = {15}/>
           </TouchableOpacity>
         </View>
-       
+       <Text style= {{marginVertical: 10 , color: "red"}}>{error}</Text>
        {/* <Button title="Sign Up" onPress={signUp} /> */}
        <Pressable onPress={signUp} style= {styles.Pressable_style}>
          <Text  style = {styles.text_style}>Sign UP</Text>

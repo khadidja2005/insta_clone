@@ -5,9 +5,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 const logo = require("../assets/images/logos_instagram.png")
-
-
-
 export default function SignIn() {
 
 
@@ -16,6 +13,8 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isvisible , setIsvisible] = useState(false)
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const changevisibility = ()=> {
     setIsvisible(! isvisible)
   }
@@ -25,9 +24,15 @@ export default function SignIn() {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log('User signed in: ', user);
+        setError("");
+        setSuccess("User signed in");
       })
       .catch((error) => {
         console.error('Error: ', error);
+        if (error.message.includes("Password should be at least 6 characters"))
+          setError("Password should be at least 6 characters");
+          else if (error.message.includes("auth/invalid-email"))
+            setError("invalid email");
       });
   };
 
@@ -43,7 +48,8 @@ export default function SignIn() {
           <Icon name = {isvisible ? "visibility": "visibility-off"} color = "#6d6d6d" size = {15}/>
           </TouchableOpacity>
         </View>
-       
+        <Text style= {{marginVertical: 10 , color: "red"}}>{error}</Text>
+        <Text style= {{marginVertical: 10 , color: "green"}}>{success}</Text>
        {/* <Button title="Sign Up" onPress={signUp} /> */}
        <Pressable onPress={signIn} style= {styles.Pressable_style}>
          <Text  style = {styles.text_style}>Sign In</Text>
