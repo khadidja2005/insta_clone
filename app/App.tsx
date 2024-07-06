@@ -9,8 +9,8 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="index" component={index} />
-        <Stack.Screen name="Signin" component={Signin} />
+        <Stack.Screen name="index" component={index}  options={{ headerShown: false }} />
+        <Stack.Screen name="Signin" component={Signin}  options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
