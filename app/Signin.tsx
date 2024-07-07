@@ -5,7 +5,9 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 const logo = require("../assets/images/logos_instagram.png")
-export default function SignIn() {
+import { NavigationProp } from '@react-navigation/native';
+
+export default function Signin() {
 
 
   
@@ -26,13 +28,15 @@ export default function SignIn() {
         console.log('User signed in: ', user);
         setError("");
         setSuccess("User signed in");
-      })
+        setTimeout(()=>{navigation.navigate("Editprofiles")},1000)})
       .catch((error) => {
         console.error('Error: ', error);
         if (error.message.includes("Password should be at least 6 characters"))
           setError("Password should be at least 6 characters");
           else if (error.message.includes("auth/invalid-email"))
             setError("invalid email");
+          else if (error.message.includes("auth/invalid-credential"))
+            setError("invalid credential");
       });
   };
 

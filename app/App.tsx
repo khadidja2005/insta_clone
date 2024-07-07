@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import index from './index.tsx';
+import Index from './index';
 import Signin from './Signin';
+import Editprofiles from './Editprofiles';
+
 
 const Stack = createStackNavigator();
+
 function App() {
   return (
-    <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="index" component={index}  options={{ headerShown: false }} />
-        <Stack.Screen name="Signin" component={Signin}  options={{ headerShown: false }} />
+        <Stack.Screen name="Editprofiles" component={Editprofiles} options={{ headerShown: false }} />
+        <Stack.Screen name="Index" component={Index} options={{ headerShown: false }} />
+        <Stack.Screen name="Signin" component={Signin} options={{ headerShown: false }} /> 
       </Stack.Navigator>
-    </NavigationContainer>
   );
 }
 

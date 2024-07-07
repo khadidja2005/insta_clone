@@ -3,12 +3,9 @@ import { View, Text, TextInput, Button , StyleSheet, SafeAreaView , Image, Press
 import {auth} from "./firebaseConfig"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 const logo = require("../assets/images/logos_instagram.png")
-
-
-
-export default function index() {
+export default function Index() {
 
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
@@ -28,6 +25,8 @@ export default function index() {
         setError("Password should be at least 6 characters");
         else if (error.message.includes("auth/invalid-email"))
           setError("invalid email");
+        else if (error.message.includes("auth/email-already-in-use"))
+          setError("email already in use");
       });
   };
   const changevisibility = ()=> {
@@ -53,7 +52,7 @@ export default function index() {
        </Pressable>
        <View style = {styles.sign_in_view}>
         <Text style = {{color: "#6d6d6d"}}>Already have an account </Text>
-        <Text onPress={() => navigation.navigate('Signin')} style={{ color: "#0095F6", textDecorationLine: "underline" }}>Sign In</Text>
+        <Pressable onPress={() => navigation.navigate("Signin")} ><Text style={{ color: "#0095F6", textDecorationLine: "underline" }}>Sign In</Text></Pressable>
        </View>
        {/* <Button title="Sign In" onPress={signIn} /> */}
     </View>
