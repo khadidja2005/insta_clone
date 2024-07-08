@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
 import RNPickerSelect from 'react-native-picker-select';
@@ -19,6 +19,8 @@ export default function Editprofiles() {
     const [phone, setPhone] = useState("");
     const [link, setLink] = useState("");
     const [gender, setGender] = useState("");
+    const [error , setError] = useState("");
+    const [success , setSuccess] = useState("");
 
 
     useEffect(() => {
@@ -63,6 +65,10 @@ export default function Editprofiles() {
 
     const saveProfile = async () => {
       if (profileImage) {
+        const posts: String[] =[]
+        const followers:String[] = []
+        const following:String[] = []
+
           try {
               const photoURL = await uploadImage(profileImage);
               const userRef = doc(db, "users", auth.currentUser.uid);
@@ -71,23 +77,30 @@ export default function Editprofiles() {
                   name,
                   username,
                   bio,
-                  //phone,
-                  //link,
+                  phone,
+                  link,
               )
               await setDoc(userRef, {
                   name,
                   username,
                   bio,
-                  //phone,
-                  //link,
-                  //gender,
-                  photoURL
+                  phone,
+                  link,
+                  gender,
+                  photoURL,
+                  posts,
+                  followers,
+                  following,
               }, { merge: true });
-              console.log('Profile updated successfully!');
-              navigation.goBack();
+              console.log('Profile created successfully!');
+                setSuccess("user created successfully!");
+                setError("");
+              setTimeout(()=>navigation.navigate("Signin"),2000);
           } catch (error) {
               console.error('Error saving profile: ', error);
               alert('Error saving profile. Please try again.');
+                setError("Error saving profile. Please try again.");
+                setSuccess("");
           }
       } else {
           alert('Please select an image');
@@ -100,7 +113,9 @@ export default function Editprofiles() {
 
     return (
         <SafeAreaView>
+            <StatusBar barStyle="dark-content" />
             <ScrollView>
+            
                 <View style={styles.container}>
                     <View style={styles.container_row}>
                         <Icon name="close" size={30} color="#000" onPress={navigation.goBack} />
@@ -144,6 +159,8 @@ export default function Editprofiles() {
                         />
                         <TextInput placeholder="Phone number" style={styles.textinput} value={phone} onChangeText={setPhone} />
                         <TextInput placeholder="Add link" style={styles.textinput} value={link} onChangeText={setLink} />
+                        <Text style= {{marginVertical: 10 , color: "red"}}>{error}</Text>
+                        <Text style= {{marginVertical: 10 , color: "green"}}>{success}</Text>
                     </View>
                 </View>
             </ScrollView>

@@ -11,6 +11,7 @@ export default function Index() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isvisible , setIsvisible] = useState(false)
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const signUp = () => {
     createUserWithEmailAndPassword(auth , email, password)
@@ -18,6 +19,8 @@ export default function Index() {
         const user = userCredential.user;
         console.log('User registered: ', user);
         setError("");
+        setSuccess("User signed up");
+        setTimeout(()=>{navigation.navigate("Editprofiles")},1000)
       })
       .catch((error) => {
         console.error('Error: ', error);
@@ -46,6 +49,7 @@ export default function Index() {
           </TouchableOpacity>
         </View>
        <Text style= {{marginVertical: 10 , color: "red"}}>{error}</Text>
+       <Text style= {{marginVertical: 10 , color: "green"}}>{success}</Text>
        {/* <Button title="Sign Up" onPress={signUp} /> */}
        <Pressable onPress={signUp} style= {styles.Pressable_style}>
          <Text  style = {styles.text_style}>Sign UP</Text>

@@ -28,7 +28,8 @@ export default function Signin() {
         console.log('User signed in: ', user);
         setError("");
         setSuccess("User signed in");
-        setTimeout(()=>{navigation.navigate("Editprofiles")},1000)})
+        setTimeout(()=> navigation.navigate("Profile"), 1000)
+        })
       .catch((error) => {
         console.error('Error: ', error);
         if (error.message.includes("Password should be at least 6 characters"))
@@ -49,7 +50,7 @@ export default function Signin() {
         <View style={styles.style_password}>
           <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry={!isvisible} style={styles.style_input_password} />
           <TouchableOpacity style = {styles.style_icon} onPress={changevisibility}>
-          <Icon name = {isvisible ? "visibility": "visibility-off"} color = "#6d6d6d" size = {15}/>
+          <Icon name = {isvisible ? "visibility": "visibility-off"} color = "#6d6d6d" size = {15} />
           </TouchableOpacity>
         </View>
         <Text style= {{marginVertical: 10 , color: "red"}}>{error}</Text>
