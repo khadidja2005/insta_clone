@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Icon2 from "react-native-vector-icons/MaterialCommunityIcons";
 import RNPickerSelect from 'react-native-picker-select';
@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app, auth, db, storage } from './firebaseConfig'; // Make sure to adjust the path
 
-export default function Editprofiles() {
+export default function Editinfo() {
     const navigation = useNavigation();
     const [profileImage, setProfileImage] = useState();
     const [name, setName] = useState("");
@@ -21,6 +21,20 @@ export default function Editprofiles() {
     const [gender, setGender] = useState("");
     const [error , setError] = useState("");
     const [success , setSuccess] = useState("");
+    const [user , setUser] = useState({
+        name:'',
+        username:'',
+        bio:'',
+        phone:"",
+        link:'',
+        gender:'',
+        photoURL:'',
+        posts:[],
+        followers:[],
+        following:[],
+        stories:[]
+    })
+
 
     useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -35,7 +49,29 @@ export default function Editprofiles() {
 
       return () => unsubscribe();
   }, []);
+  useEffect(()=> {
+    const fetchData =async()=> {
+     const docref =  doc(db , "users" , auth.currentUser.uid)
+     const docSnap = await getDoc(docref)
+     if (docSnap.exists()){
+     const userdata = docSnap.data()    
+     setUser(docSnap.data())
+     setBio(userdata.bio)
+     setName(userdata.name)
+     setGender(userdata.gender)
+     setLink(userdata.link)
+     setPhone(userdata.phone)
+     setUsername(userdata.username)
+     setProfileImage(userdata.photoURL)
 
+     }
+     else {
+        console.log("user does not exist")
+     }
+
+    }
+    fetchData();
+    } , [])
 
 
     const openImagePicker = async () => {
@@ -93,10 +129,10 @@ export default function Editprofiles() {
                   following,
                   stories,
               }, { merge: true });
-              console.log('Profile created successfully!');
-                setSuccess("user created successfully!");
+              console.log('Profile updated successfully!');
+                setSuccess("user updated successfully!");
                 setError("");
-              setTimeout(()=>navigation.navigate("Signin"),2000);
+              setTimeout(()=>navigation.navigate("Profile"),2000);
           } catch (error) {
               console.error('Error saving profile: ', error);
               alert('Error saving profile. Please try again.');
@@ -147,7 +183,7 @@ export default function Editprofiles() {
                             value={bio}
                             onChangeText={setBio}
                         />
-                        <RNPickerSelect
+                        <RNPickerSelect value={gender}
                             onValueChange={(value) => setGender(value)}
                             items={[
                                 { label: 'Male', value: 'Male' },
