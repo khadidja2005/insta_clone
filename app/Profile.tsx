@@ -59,7 +59,7 @@ export default function Profile () {
 return (
     <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" />  
-     <ScrollView style={styles.scrollcontainer} scrollEnabled={false}>
+     <ScrollView contentContainerStyle={styles.scrollcontainer} >
         <View>
          <View style={styles.view_row}>
             <ArrowIcon name="arrow-back-ios" size={25} onPress={()=> navigation.goBack()} />
@@ -113,7 +113,6 @@ return (
         data={user.posts} 
         keyExtractor={(item, index) => String(index)}
         numColumns={3}
-        nestedScrollEnabled
         contentContainerStyle={{ paddingHorizontal: 5, paddingTop: 10 }}/> 
         </View>
 
@@ -176,6 +175,7 @@ const styles = StyleSheet.create({
     },
 
     tab_view : {
+        backgroundColor:"#fff",
         bottom:0,
         width:"100%",
         flexDirection:"row",

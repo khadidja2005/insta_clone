@@ -1,135 +1,231 @@
-import { FlatList, Image, Modal, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/Octicons"
-import SearchIcon from "react-native-vector-icons/Fontisto"
-import ProfileIcon from "react-native-vector-icons/Feather"
-import ReelIcon from "react-native-vector-icons/Octicons"
-import ShopIcon from "react-native-vector-icons/MaterialCommunityIcons"
-import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Dimensions, FlatList, Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Octicons";
+import SearchIcon from "react-native-vector-icons/Fontisto";
+import ProfileIcon from "react-native-vector-icons/Feather";
+import ReelIcon from "react-native-vector-icons/Octicons";
+import ShopIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-const logo = require("../assets/images/logos_instagram.png")
+import { useNavigation } from "@react-navigation/native";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "./firebaseConfig";
+
+const logo = require("../assets/images/logos_instagram.png");
+
 export default function Home() {
-    
+    const [imageHeight, setImageHeight] = useState(500);
     const navigation = useNavigation();
-    const [selectedmenu , setSelectedmenu] = useState("Home")
+    const [selectedMenu, setSelectedMenu] = useState("Home");
+    const [user , setUser] = useState({
+        name:'',
+        username:'',
+        bio:'',
+        phone:"",
+        link:'',
+        gender:'',
+        photoURL:'',
+        posts:[],
+        followers:[],
+        following:[],
+        stories:[]
+    })
+    useEffect(()=> {
+    const fetchData =async()=> {
+     const docref =  doc(db , "users" , auth.currentUser.uid)
+     const docSnap = await getDoc(docref)
+     if (docSnap.exists()){
+     setUser(docSnap.data())
+     }
+     else {
+        console.log("user does not exist")
+     }
+
+    }
+    fetchData();
+    } , [])
+    const renderItem = ({item}: {item: any})=> {
+        console.log(item)
+        const username = user.username
+        const photourl = user.photoURL
+        const post = item
+
+        return (
+        <View style={{marginVertical:10}} >
+           <View style={styles.styleheader}>
+                <Image source={{uri:photourl}} style={styles.postpro} />
+                <Text style={{fontWeight:"bold"}}>{username}</Text>
+            </View> 
+            <View>
+                <Image 
+                source={{uri:post.photourl}} 
+                style={[styles.post , {height:imageHeight}]} />
+                
+            </View>
+            <View style={styles.styleheader}>
+            <FontAwesome5 name="heart" style={styles.icon} />
+            <FontAwesome5 name="comment" style={styles.icon} />
+            <FontAwesome5 name="share" style={styles.icon} />
+
+            </View>
+            <Text style={{paddingVertical:10}}>{post.caption}</Text>
+        </View>
+        )
+
+    }
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar barStyle="dark-content" /> 
-            <ScrollView style={styles.scrollcontainer} scrollEnabled={false} >
-               <View style={styles.Viewrow}>
-               <Image source={logo}  style= {styles.insta_logo_style}/>
-               <View style={{flexDirection:'row'}}>
-                   <FontAwesome5 name="heart"  style={styles.iconstyle} />
-                   <FontAwesome5 name="facebook-messenger" style={styles.iconstyle}/>   
-               </View>
+            <StatusBar barStyle="dark-content" />
+            <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.contentContainer} horizontal={false}>
+                <View style={styles.header}>
+                    <Image source={logo} style={styles.instaLogo} />
+                    <View style={styles.iconsContainer}>
+                        <FontAwesome5 name="heart" style={styles.icon} />
+                        <FontAwesome5 name="facebook-messenger" style={styles.icon} />
+                    </View>
+                </View>
+                <View style={styles.storyContainer}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.storyContent}>
+                        <Image source={require("../assets/images/profile.png")} style={styles.storyImage} />
+                        <Image source={require("../assets/images/profile.png")} style={styles.storyImage} />
+                        <Image source={require("../assets/images/profile.png")} style={styles.storyImage} />
+                        <Image source={require("../assets/images/profile.png")} style={styles.storyImage} />
+                        <Image source={require("../assets/images/profile.png")} style={styles.storyImage} />
+                        <Image source={require("../assets/images/profile.png")} style={styles.storyImage} />
+                    </ScrollView>
+                </View>
+                <View>
+                <FlatList
+                    data={user.posts.reverse()}
+                    renderItem={renderItem}
+                    keyExtractor={(item)=> item.createdAt}/>
+                </View>
+            </ScrollView>
 
-               </View>
-               <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.view_row , {justifyContent:"flex-start"}]}>
-            <Image source={require("../assets/images/profile.png")} style={styles.Storystyle}  />
-            <Image source={require("../assets/images/profile.png")} style={styles.Storystyle} />
-            <Image source={require("../assets/images/profile.png")} style={styles.Storystyle} />
-            <Image source={require("../assets/images/profile.png")} style={styles.Storystyle}  />
-            <Image source={require("../assets/images/profile.png")} style={styles.Storystyle} />
-            <Image source={require("../assets/images/profile.png")} style={styles.Storystyle} />
-        </ScrollView> 
-               <View>
-
-               </View>
-             </ScrollView>     
-    
-    <View style={styles.tab_view}>                
-        <TouchableOpacity onPress={()=>{navigation.navigate("Home")
-            setSelectedmenu("Home")
-        }}>
-           <Icon name = "home" style={selectedmenu=="Home" ? styles.tab_icon_selcted : styles.tab_icon} /> 
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{
-            navigation.navigate("Search") 
-            setSelectedmenu("Search")} }>
-           <SearchIcon name="search" style={selectedmenu=="Search" ? styles.tab_icon_selcted : styles.tab_icon} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=> {
-            navigation.navigate("Reels")
-            setSelectedmenu("Reels")}}>
-           <ReelIcon name ="video" style={selectedmenu=="Reels" ? styles.tab_icon_selcted : styles.tab_icon}  /> 
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{ 
-          navigation.navigate("Shop")
-          setSelectedmenu("Shop")
-        }}>
-          <ShopIcon name="shopping-outline" style={selectedmenu=="Shop" ? styles.tab_icon_selcted : styles.tab_icon}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>{
-            navigation.navigate("Profile")
-            setSelectedmenu("Profile")}}>
-           <ProfileIcon name ="user" style={selectedmenu=="Profile" ? styles.tab_icon_selcted : styles.tab_icon} />
-        </TouchableOpacity>
-    </View>
+            <View style={styles.tabView}>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("Home");
+                    setSelectedMenu("Home");
+                }}>
+                    <Icon name="home" style={selectedMenu === "Home" ? styles.tabIconSelected : styles.tabIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("Search");
+                    setSelectedMenu("Search");
+                }}>
+                    <SearchIcon name="search" style={selectedMenu === "Search" ? styles.tabIconSelected : styles.tabIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("Reels");
+                    setSelectedMenu("Reels");
+                }}>
+                    <ReelIcon name="video" style={selectedMenu === "Reels" ? styles.tabIconSelected : styles.tabIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("Shop");
+                    setSelectedMenu("Shop");
+                }}>
+                    <ShopIcon name="shopping-outline" style={selectedMenu === "Shop" ? styles.tabIconSelected : styles.tabIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate("Profile");
+                    setSelectedMenu("Profile");
+                }}>
+                    <ProfileIcon name="user" style={selectedMenu === "Profile" ? styles.tabIconSelected : styles.tabIcon} />
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
-    )
+    );
 }
+
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
+    container: {
+        flex: 1,
     },
-    scrollcontainer:{
-    paddingBottom:60,
-    paddingHorizontal:10,
+    scrollContainer: {
+        flex: 1,
     },
-
-    tab_view : {
-        bottom:0,
-        width:"100%",
-        flexDirection:"row",
-        justifyContent:"space-around",
-        position:"absolute",
-        paddingVertical:12,
-        borderTopColor:"#eee",
-        borderWidth:1,
-        zIndex:100,
+    contentContainer: {
+        paddingHorizontal: 10,
     },
-    tab_icon: {
-      color:"#555",
-      fontSize:25,
-    },
-    tab_icon_selcted:{
-     fontSize:27,
-     paddingHorizontal:5,
-     color:"#000"
-     
-    },
-    view_row: {
+    tabView: {
         flexDirection: "row",
-        flex:1,
+        justifyContent: "space-around",
+        paddingVertical: 12,
+        borderTopColor: "#eee",
+        borderTopWidth: 1,
+        zIndex: 100,
+        backgroundColor: "#fff",
+    },
+    tabIcon: {
+        color: "#555",
+        fontSize: 25,
+    },
+    tabIconSelected: {
+        color: "#000",
+        fontSize: 27,
+        paddingHorizontal: 5,
+    },
+    header: {
+        flexDirection: "row",
         justifyContent: "space-between",
-        paddingHorizontal:20,
-        paddingVertical:10,
-        alignItems:"center",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+        backgroundColor: "#fff",
     },
-    insta_logo_style:{
-     width:"40%",
-     resizeMode:"contain",
-     height:50,
+    instaLogo: {
+        width: "40%",
+        resizeMode: "contain",
+        height: 50,
     },
-    Viewrow:{
-        justifyContent:"space-between",
-        flexDirection:"row",
-        paddingVertical:10,
-
+    iconsContainer: {
+        flexDirection: "row",
     },
-    iconstyle:{
-        color:"black",
-        fontSize:25,
-        marginHorizontal:10,
+    icon: {
+        color: "black",
+        fontSize: 25,
+        marginHorizontal: 10,
     },
-    Storystyle : {
+    storyContainer: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+        backgroundColor: "#fff",
+    },
+    storyContent: {
+        paddingHorizontal: 10,
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    storyImage: {
         width: 50,
-        borderColor:"#db2777",
-        borderWidth:1, 
-        height:50, 
-        borderRadius: 50 , 
-        marginRight:12,  
+        height: 50,
+        borderRadius: 25,
+        marginRight: 12,
+        borderColor: "#db2777",
+        borderWidth: 1,
     },
+    postImage :{
+        width:50,
+        height:50,
+        borderRadius:50,
 
-
-})
+    },
+    styleheader:{
+        flexDirection:"row",
+        justifyContent:"flex-start",
+        alignItems:"center",
+        paddingVertical:10,
+    },
+    postpro:{
+        width:40,
+        height:40,
+        borderRadius:50,
+        marginRight:10,
+    },
+    post:{
+        width:"100%",
+        resizeMode:"contain"
+    },
+});
