@@ -62,7 +62,7 @@ return (
      <ScrollView contentContainerStyle={styles.scrollcontainer} >
         <View>
          <View style={styles.view_row}>
-            <ArrowIcon name="arrow-back-ios" size={25} onPress={()=> navigation.goBack()} />
+            <ArrowIcon name="arrow-back-ios" size={25} onPress={()=> navigation.navigate('Home')} />
             <Text style={{fontSize:20}}>{user.username}</Text>
             <Setting name="plus" size={25} onPress={()=>setModelVisible(true)}/>
          </View>
