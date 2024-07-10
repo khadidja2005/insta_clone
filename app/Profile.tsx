@@ -1,4 +1,4 @@
-import { Image, Modal, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Modal, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Octicons"
 import Icon2 from "react-native-vector-icons/MaterialIcons";
 import SearchIcon from "react-native-vector-icons/Fontisto"
@@ -8,6 +8,9 @@ import ShopIcon from "react-native-vector-icons/MaterialCommunityIcons"
 import ArrowIcon from "react-native-vector-icons/MaterialIcons"
 import Setting from "react-native-vector-icons/SimpleLineIcons"
 import { useNavigation } from "@react-navigation/native";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Feather from '@expo/vector-icons/Feather';
+import Octicons from '@expo/vector-icons/Octicons';
 import { useEffect, useState } from "react";
 import { auth, db } from "./firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
@@ -15,6 +18,8 @@ export default function Profile () {
     const navigation = useNavigation();
     const [selectedmenu , setSelectedmenu] = useState("Profile")
     const [modalVisible, setModelVisible] = useState(false)
+    const [selectedoption , setSelectedoption] = useState("posts")
+    let x = 0;
     const [user , setUser] = useState({
         name:'',
         username:'',
@@ -42,11 +47,19 @@ export default function Profile () {
     }
     fetchData();
     } , [])
+    const renderItem = ({item}: {item: any})=> {
+        console.log(item)
+        return (
+        <View style={styles.postContainer}>
+            <Image source={{uri:item.photourl}} style={styles.postImage} />
+     </View>
+        )
 
+    }
 return (
     <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" />  
-     <ScrollView style={styles.scrollcontainer}>
+     <ScrollView style={styles.scrollcontainer} scrollEnabled={false}>
         <View>
          <View style={styles.view_row}>
             <ArrowIcon name="arrow-back-ios" size={25} onPress={()=> navigation.goBack()} />
@@ -87,7 +100,23 @@ return (
             <Image source={require("../assets/images/profile.png")} style={styles.Storystyle}  />
             <Image source={require("../assets/images/profile.png")} style={styles.Storystyle} />
             <Image source={require("../assets/images/profile.png")} style={styles.Storystyle} />
-        </View>   
+        </View> 
+        
+        <View style={styles.view_row}>
+        <MaterialIcons name="window" size={25} style={[{marginLeft:10},selectedoption=="posts"?{color:"black"}:{color:"#aaa"}]} onPress={()=>setSelectedoption("posts")}  />
+        <Octicons name="video" size={25} style={selectedoption=="reels"?{color:"black"}:{color:"#aaa"}} onPress={()=>setSelectedoption("reels")}   />
+        <Feather name="user" size={25}  style={[{marginRight:10}, selectedoption=="tags"?{color:"black"}:{color:"#aaa"}]} onPress={()=>setSelectedoption("tags")}  />
+        </View> 
+        <View >
+        <FlatList 
+        renderItem={renderItem} 
+        data={user.posts} 
+        keyExtractor={(item, index) => String(index)}
+        numColumns={3}
+        nestedScrollEnabled
+        contentContainerStyle={{ paddingHorizontal: 5, paddingTop: 10 }}/> 
+        </View>
+
         </View>
         <Modal visible={modalVisible} transparent={true} animationType="fade" >
             <View style={styles.modalContainer}>
@@ -224,5 +253,14 @@ const styles = StyleSheet.create({
      paddingVertical:15,
      borderBottomColor:"#aaa",
      borderBottomWidth:1,
-    }
+    },
+    postContainer: {
+        width: "32%",
+        aspectRatio: 1, 
+        margin: 1, 
+      },
+      postImage: {
+        width: "100%",
+        height: "100%",
+      },
 })
