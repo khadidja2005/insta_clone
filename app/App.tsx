@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Index from './index';
 import Signin from './Signin';
 import Editprofiles from './Editprofiles';
+import Users from './Users';
 
 
 const Stack = createStackNavigator();

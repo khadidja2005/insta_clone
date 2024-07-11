@@ -12,6 +12,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useEffect, useState } from "react";
 import { auth, db } from "./firebaseConfig";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+export var username: string;
 export default function Search () {
     const navigation = useNavigation();
     const [selectedmenu , setSelectedmenu] = useState("Search")
@@ -52,7 +53,9 @@ return (
          keyExtractor={(item , index)=> index.toString()}
          renderItem={({item})=> (
           <View style={styles.viewrow}>
-            <Text>{item}</Text>
+            <Text onPress={() => {
+              username = item
+              navigation.navigate("Users")}}>{item}</Text>
           </View>
          )}/>}
       </View>
@@ -125,7 +128,8 @@ const styles = StyleSheet.create({
       width:"100%",
       marginHorizontal:10,
       marginVertical:10,
-      alignItems:"center"
+      alignItems:"center",
+      padding:10
     }
 
 })
