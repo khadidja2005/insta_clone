@@ -100,10 +100,6 @@ export default function Editinfo() {
 
     const saveProfile = async () => {
       if (profileImage) {
-        const posts: String[] =[]
-        const followers:String[] = []
-        const following:String[] = []
-        const stories:String[]=[]
 
           try {
               const photoURL = await uploadImage(profileImage);
@@ -124,10 +120,6 @@ export default function Editinfo() {
                   link,
                   gender,
                   photoURL,
-                  posts,
-                  followers,
-                  following,
-                  stories,
               }, { merge: true });
               console.log('Profile updated successfully!');
                 setSuccess("user updated successfully!");
