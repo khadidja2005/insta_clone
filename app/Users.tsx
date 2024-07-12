@@ -13,17 +13,16 @@ import Feather from '@expo/vector-icons/Feather';
 import Octicons from '@expo/vector-icons/Octicons';
 import { useEffect, useState } from "react";
 import { auth, db } from "./firebaseConfig";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { RouteProp } from '@react-navigation/native';
 import { username } from "./Search";
 export default function Users () {
+    const [user2 , setUser2] = useState(null) ;
     const name = username
     console.log(name)
     console.log(name)
     console.log(name)
     const navigation = useNavigation();
-    const [selectedmenu , setSelectedmenu] = useState("Profile")
-    const [modalVisible, setModelVisible] = useState(false)
     const [selectedoption , setSelectedoption] = useState("posts")
     let x = 0;
     const [user , setUser] = useState({
@@ -45,6 +44,7 @@ export default function Users () {
               const usersRef = collection(db, "users");
               const q = query(usersRef, where("username", "==", username));
               const querySnapshot = await getDocs(q);
+              setUser2(querySnapshot.docs[0])
               setUser(querySnapshot.docs[0].data())
               console.log(user)
             } catch (e) {
@@ -54,6 +54,40 @@ export default function Users () {
       
         fetchData();
     } , [])
+
+    const followingfunc = async () => {
+        try {
+            const userRef = collection(db, "users");
+            const q = query(userRef, where("username", "==", username));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const targetUserDoc = querySnapshot.docs[0];
+                const targetUserId = targetUserDoc.id;
+
+                const currentUserDoc = doc(db, "users", auth.currentUser.uid);
+                await updateDoc(currentUserDoc, {
+                    following: arrayUnion(targetUserId)
+                });
+
+                await updateDoc(targetUserDoc.ref, {
+                    followers: arrayUnion(auth.currentUser.uid)
+                });
+                addFollower(targetUserId)
+                console.log("Successfully followed the user");
+            } else {
+                console.log("No matching user found to follow");
+            }
+        } catch (e) {
+            console.error("Error updating follow status:", e);
+        }
+    };
+    const addFollower = (newFollower) => {
+        setUser((prevUser) => ({
+            ...prevUser,
+            following: [...prevUser.followers, newFollower]
+        }));
+    };
     const renderItem = ({item}: {item: any})=> {
         console.log(item)
         return (
@@ -70,8 +104,7 @@ return (
         <View>
          <View style={styles.view_row}>
             <ArrowIcon name="arrow-back-ios" size={25} onPress={()=> navigation.navigate('Search')} />
-            <Text style={{fontSize:20}}>{user.username}</Text>
-            <Setting name="plus" size={25} onPress={()=>setModelVisible(true)}/>
+            <Text style={{fontSize:20 , marginRight:80}}>{user.username}</Text>
          </View>
          <View style={[styles.view_row,{gap:15}]}>
          <Image source={{uri:user.photoURL || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}} style={{ width: 90, height:90, borderRadius: 50 , marginRight:10 }} /> 
@@ -96,11 +129,11 @@ return (
             <Text >{user.link}</Text>
          </View> 
          <View style={styles.view_row}>
-            <Pressable style={styles.pressablestyle} onPress={()=> navigation.navigate("Editinfo")}>
-                <Text>Edit Profile</Text>
+            <Pressable style={styles.pressablestyle} onPress={followingfunc}>
+                <Text style={{color:"#fff"}}>Follow</Text>
             </Pressable>
             <Pressable style={styles.pressablestyle}>
-                <Text>Share</Text>
+                <Text style={{color:"#fff"}}>Message</Text>
             </Pressable>
         </View>
         <View style={[styles.view_row , {justifyContent:"flex-start"}]}>
@@ -187,7 +220,7 @@ const styles = StyleSheet.create({
     pressablestyle:{
         paddingHorizontal:40,
         paddingVertical:10,
-        backgroundColor:"#d6d6d6",
+        backgroundColor:"#25a5F6",
         borderRadius:5
 
     },
