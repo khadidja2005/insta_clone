@@ -9,13 +9,13 @@ import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = { 
-  apiKey : "AIzaSyAbikPYpsIPNq3NKEQd1zd30AF-mNP6-VI" , 
-  authDomain : "instaclone-653b8.firebaseapp.com" , 
-  projectId : "instaclone-653b8" , 
-  storageBucket : "instaclone-653b8.appspot.com" , 
-  messagingSenderId : "684080371421" , 
-  appId : "1:684080371421:web:2f71bfd713d45a23e5ed34" , 
-  measurementId : "G-K52VL9C1T4" 
+  apiKey : "" , 
+  authDomain : "" , 
+  projectId : "" , 
+  storageBucket : "" , 
+  messagingSenderId : "" , 
+  appId : "" , 
+  measurementId : "" 
 };
 
 // Initialize Firebase
